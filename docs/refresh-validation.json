@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "operation": "Full import refresh from configured local source",
+  "seconds": 85.4621776,
+  "checked_at_utc": "2026-10-09T09:42:17.7787205Z",
+  "baseline_seconds": 492.2747011,
+  "baseline_checked_at_utc": "2026-10-09T08:16:15.4088108Z",
+  "elapsed_time_reduction_percent": 82.64,
+  "scope": "One baseline and two optimized full refreshes on the same development machine and unchanged original files. Local observations, not a general performance guarantee.",
+  "preservation": {
+    "samples": 1567,
+    "measurements": 590,
+    "exact_numeric_readings": 882579,
+    "missing_positions": 41951
+  },
+  "checks": [
+    "model-validation.json",
+    "reading-validation.json"
+  ],
+  "verification_refresh_in_github_checkout": {
+    "status": "passed",
+    "operation": "Full import refresh from configured local source",
+    "seconds": 79.4908004,
+    "checked_at_utc": "2026-10-09T09:51:02.1238933Z"
+  }
+}

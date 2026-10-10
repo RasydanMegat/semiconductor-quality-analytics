@@ -1,0 +1,782 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Reset view",
+  "name": "2c873dd7868ec21aefb2",
+  "options": {
+    "targetVisualNames": [],
+    "suppressActiveSection": true,
+    "suppressDisplay": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "1bad10e0af34485f8b05",
+    "filters": {
+      "byExpr": []
+    },
+    "sections": {
+      "1bad10e0af34485f8b05": {
+        "filters": {
+          "byExpr": []
+        },
+        "visualContainers": {
+          "51f11dedffa6652133fa": {
+            "singleVisual": {}
+          },
+          "3d13a9ecc3c9271fd0b8": {
+            "singleVisual": {}
+          },
+          "f2bc676b0bcb73b88799": {
+            "singleVisual": {}
+          },
+          "aa6fc849d4bebfed49b2": {
+            "singleVisual": {}
+          },
+          "8a3b6b326898ac0aa0a7": {
+            "singleVisual": {}
+          },
+          "7aca2453d01d1947ad24": {
+            "singleVisual": {}
+          },
+          "4e06012e80ecc818ba78": {
+            "singleVisual": {}
+          },
+          "7759ae673115d795273e": {
+            "singleVisual": {}
+          },
+          "0a3825dc0e5ccd9be1bb": {
+            "singleVisual": {}
+          },
+          "7bbea12cdee5a2909d9a": {
+            "singleVisual": {}
+          },
+          "27dbacc1ab77ab10e25c": {
+            "singleVisual": {}
+          },
+          "2ec6be0ca3e7c3160744": {
+            "singleVisual": {
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {}
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "f26d620d41cc15f01fb7": {
+            "singleVisual": {}
+          },
+          "abdcba8269417c67b35e": {
+            "singleVisual": {}
+          },
+          "c1c9b71783cb86128d29": {
+            "singleVisual": {}
+          },
+          "f6e767aed547552b5c47": {
+            "singleVisual": {}
+          },
+          "fb11bcbe0ee645e93f91": {
+            "singleVisual": {}
+          },
+          "78cdc7440c42cb816614": {
+            "singleVisual": {}
+          },
+          "bf7ada974f1d5a86f2aa": {
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 1,
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Calendar"
+                        }
+                      },
+                      "Property": "Week Start"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "51ba1c83b3dd5f4f5363": {
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 1,
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Calendar"
+                        }
+                      },
+                      "Property": "Week Start"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "58a22fc037bbc5f92ac9": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "Filtercd1af9a74e26880c201b1234",
+                  "type": "TopN",
+                  "filter": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "subquery",
+                        "Expression": {
+                          "Subquery": {
+                            "Query": {
+                              "Version": 2,
+                              "From": [
+                                {
+                                  "Name": "s",
+                                  "Entity": "Calendar",
+                                  "Type": 0
+                                },
+                                {
+                                  "Name": "m",
+                                  "Entity": "Sample",
+                                  "Type": 0
+                                }
+                              ],
+                              "Select": [
+                                {
+                                  "Column": {
+                                    "Expression": {
+                                      "SourceRef": {
+                                        "Source": "s"
+                                      }
+                                    },
+                                    "Property": "Week Start"
+                                  },
+                                  "Name": "field"
+                                }
+                              ],
+                              "OrderBy": [
+                                {
+                                  "Direction": 2,
+                                  "Expression": {
+                                    "Measure": {
+                                      "Expression": {
+                                        "SourceRef": {
+                                          "Source": "m"
+                                        }
+                                      },
+                                      "Property": "Observed Failure Rate"
+                                    }
+                                  }
+                                }
+                              ],
+                              "Top": 8
+                            }
+                          }
+                        },
+                        "Type": 2
+                      },
+                      {
+                        "Name": "s",
+                        "Entity": "Calendar",
+                        "Type": 0
+                      }
+                    ],
+                    "Where": [
+                      {
+                        "Condition": {
+                          "In": {
+                            "Expressions": [
+                              {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "s"
+                                    }
+                                  },
+                                  "Property": "Week Start"
+                                }
+                              }
+                            ],
+                            "Table": {
+                              "SourceRef": {
+                                "Source": "subquery"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Calendar"
+                        }
+                      },
+                      "Property": "Week Start"
+                    }
+                  },
+                  "howCreated": 1
+                }
+              ]
+            },
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 2,
+                  "Expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Sample"
+                        }
+                      },
+                      "Property": "Observed Failure Rate"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "0c2a4da706cd3fe97bfd": {
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 1,
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Sample"
+                        }
+                      },
+                      "Property": "Sample ID"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "38666411f5b7b14495b8": {
+        "filters": {
+          "byExpr": []
+        },
+        "visualContainers": {
+          "2d9a17231d610d6563e3": {
+            "singleVisual": {}
+          },
+          "236dc772f34dca2e29d3": {
+            "singleVisual": {}
+          },
+          "8e6e832101baaf9d96c6": {
+            "singleVisual": {}
+          },
+          "6d3a2a1d46d7a5bbab21": {
+            "singleVisual": {}
+          },
+          "4ea2d919bfde2cfcc93d": {
+            "singleVisual": {}
+          },
+          "7b3ca29f4c1284a96c52": {
+            "singleVisual": {}
+          },
+          "6ec867cb76aa3ce64c8b": {
+            "singleVisual": {}
+          },
+          "efb79de30e8f0f1bec92": {
+            "singleVisual": {}
+          },
+          "d5b219db6c0678ee939e": {
+            "singleVisual": {}
+          },
+          "d041e3a352b9582783c1": {
+            "singleVisual": {}
+          },
+          "c38cb2fa50e1f67685cb": {
+            "singleVisual": {}
+          },
+          "83788e2a7e366429b4df": {
+            "singleVisual": {
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {}
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "9c1da13830984e600b48": {
+            "singleVisual": {}
+          },
+          "5740c35b74667b6c2153": {
+            "singleVisual": {
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {
+                        "filter": {
+                          "filter": {
+                            "Version": 2,
+                            "From": [
+                              {
+                                "Name": "s",
+                                "Entity": "Measurement Selector",
+                                "Type": 0
+                              }
+                            ],
+                            "Where": [
+                              {
+                                "Condition": {
+                                  "In": {
+                                    "Expressions": [
+                                      {
+                                        "Column": {
+                                          "Expression": {
+                                            "SourceRef": {
+                                              "Source": "s"
+                                            }
+                                          },
+                                          "Property": "Measurement"
+                                        }
+                                      }
+                                    ],
+                                    "Values": [
+                                      [
+                                        {
+                                          "Literal": {
+                                            "Value": "'Measurement 060'"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "af0abda19dba04245f8f": {
+            "singleVisual": {}
+          },
+          "af36aedfa8ba830c416e": {
+            "singleVisual": {}
+          },
+          "fcff3406bade8a2dd1c8": {
+            "singleVisual": {}
+          },
+          "e267490dcb78be658f96": {
+            "singleVisual": {}
+          },
+          "019d3ccdc7b5b508499d": {
+            "singleVisual": {}
+          },
+          "268736433048a5a374d3": {
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 1,
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Histogram Bin"
+                        }
+                      },
+                      "Property": "Bin"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "bdbfa40660c3754094af": {
+            "singleVisual": {}
+          },
+          "7a9f60aeaef170ee49c3": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "Filter6fd44554c2634549ad7d1234",
+                  "type": "TopN",
+                  "filter": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "subquery",
+                        "Expression": {
+                          "Subquery": {
+                            "Query": {
+                              "Version": 2,
+                              "From": [
+                                {
+                                  "Name": "s",
+                                  "Entity": "Measurement",
+                                  "Type": 0
+                                },
+                                {
+                                  "Name": "m",
+                                  "Entity": "Reading",
+                                  "Type": 0
+                                }
+                              ],
+                              "Select": [
+                                {
+                                  "Column": {
+                                    "Expression": {
+                                      "SourceRef": {
+                                        "Source": "s"
+                                      }
+                                    },
+                                    "Property": "Measurement"
+                                  },
+                                  "Name": "field"
+                                }
+                              ],
+                              "OrderBy": [
+                                {
+                                  "Direction": 2,
+                                  "Expression": {
+                                    "Measure": {
+                                      "Expression": {
+                                        "SourceRef": {
+                                          "Source": "m"
+                                        }
+                                      },
+                                      "Property": "Absolute Standardized Difference"
+                                    }
+                                  }
+                                }
+                              ],
+                              "Top": 6
+                            }
+                          }
+                        },
+                        "Type": 2
+                      },
+                      {
+                        "Name": "s",
+                        "Entity": "Measurement",
+                        "Type": 0
+                      }
+                    ],
+                    "Where": [
+                      {
+                        "Condition": {
+                          "In": {
+                            "Expressions": [
+                              {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "s"
+                                    }
+                                  },
+                                  "Property": "Measurement"
+                                }
+                              }
+                            ],
+                            "Table": {
+                              "SourceRef": {
+                                "Source": "subquery"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Measurement"
+                        }
+                      },
+                      "Property": "Measurement"
+                    }
+                  },
+                  "howCreated": 1
+                }
+              ]
+            },
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 2,
+                  "Expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Reading"
+                        }
+                      },
+                      "Property": "Absolute Standardized Difference"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "2940c47a65e487304dfd": {
+        "filters": {
+          "byExpr": []
+        },
+        "visualContainers": {
+          "5ee4e68c9ff507ae0e35": {
+            "singleVisual": {}
+          },
+          "96c245079a834ecb6915": {
+            "singleVisual": {}
+          },
+          "fa9686c9f9a51d4a8636": {
+            "singleVisual": {}
+          },
+          "d4bf01f03390e41b1dd7": {
+            "singleVisual": {}
+          },
+          "c6cac4778072b19cbf39": {
+            "singleVisual": {}
+          },
+          "bf484349fed79f9a68a7": {
+            "singleVisual": {}
+          },
+          "dc978eb29fb0ce0d5a23": {
+            "singleVisual": {}
+          },
+          "62441a40c872846b6bc5": {
+            "singleVisual": {}
+          },
+          "222d89742453e843167d": {
+            "singleVisual": {}
+          },
+          "08f9a0afe7f6578ff672": {
+            "singleVisual": {}
+          },
+          "4a26a55dcfebf5a19fe9": {
+            "singleVisual": {}
+          },
+          "6af56e62d4bc245e8283": {
+            "singleVisual": {
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {}
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "1f50184b3a1eac9b2740": {
+            "singleVisual": {}
+          },
+          "2142987e93562854e688": {
+            "singleVisual": {}
+          },
+          "84e3ef35ae7f279cb1b1": {
+            "singleVisual": {}
+          },
+          "ca0fc19c22e3a4ec5023": {
+            "singleVisual": {}
+          },
+          "da87c8c852b5976374d8": {
+            "singleVisual": {}
+          },
+          "2e07ff6e0931a5f7bc1d": {
+            "singleVisual": {}
+          },
+          "c36b0cca1d8f75faf184": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "Filter160608e3fc91e3cf5e431234",
+                  "type": "TopN",
+                  "filter": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "subquery",
+                        "Expression": {
+                          "Subquery": {
+                            "Query": {
+                              "Version": 2,
+                              "From": [
+                                {
+                                  "Name": "s",
+                                  "Entity": "Measurement",
+                                  "Type": 0
+                                },
+                                {
+                                  "Name": "m",
+                                  "Entity": "Sample",
+                                  "Type": 0
+                                }
+                              ],
+                              "Select": [
+                                {
+                                  "Column": {
+                                    "Expression": {
+                                      "SourceRef": {
+                                        "Source": "s"
+                                      }
+                                    },
+                                    "Property": "Measurement"
+                                  },
+                                  "Name": "field"
+                                }
+                              ],
+                              "OrderBy": [
+                                {
+                                  "Direction": 2,
+                                  "Expression": {
+                                    "Measure": {
+                                      "Expression": {
+                                        "SourceRef": {
+                                          "Source": "m"
+                                        }
+                                      },
+                                      "Property": "Missing Rate"
+                                    }
+                                  }
+                                }
+                              ],
+                              "Top": 10
+                            }
+                          }
+                        },
+                        "Type": 2
+                      },
+                      {
+                        "Name": "s",
+                        "Entity": "Measurement",
+                        "Type": 0
+                      }
+                    ],
+                    "Where": [
+                      {
+                        "Condition": {
+                          "In": {
+                            "Expressions": [
+                              {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "s"
+                                    }
+                                  },
+                                  "Property": "Measurement"
+                                }
+                              }
+                            ],
+                            "Table": {
+                              "SourceRef": {
+                                "Source": "subquery"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Measurement"
+                        }
+                      },
+                      "Property": "Measurement"
+                    }
+                  },
+                  "howCreated": 1
+                }
+              ]
+            },
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 2,
+                  "Expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Sample"
+                        }
+                      },
+                      "Property": "Missing Rate"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "6a7e8c747a31cea23d40": {
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 1,
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Calendar"
+                        }
+                      },
+                      "Property": "Date"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "fde6517be3a5c882bb6b": {
+            "singleVisual": {
+              "orderBy": [
+                {
+                  "Direction": 2,
+                  "Expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Sample"
+                        }
+                      },
+                      "Property": "Missing Rate"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "34b3b897cf9adf236102": {
+            "singleVisual": {}
+          }
+        }
+      }
+    }
+  }
+}

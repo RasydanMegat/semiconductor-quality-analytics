@@ -1,0 +1,23 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-GB
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["Sample","Calendar","Measurement","Reading","Measurement Selector","Histogram Bin","Availability","Data Folder","Read Measurements","Read Labels"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Sample
+ref table Calendar
+ref table Measurement
+ref table Reading
+ref table 'Measurement Selector'
+ref table 'Histogram Bin'
+ref table Availability
+

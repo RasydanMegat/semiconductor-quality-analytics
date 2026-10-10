@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "checked_at_utc": "2026-10-09T09:51:53.078418+00:00",
+  "source_sha256": "20f0e7ee434f7dcbae0eea9ffff009a2b57f42d6b0dc9a5bd4f00782c0a3374c",
+  "samples": 1567,
+  "measurements": 590,
+  "source_positions_checked": 924530,
+  "exact_values_matched": 882579,
+  "missing_positions_preserved": 41951,
+  "duplicate_imported_keys": 0,
+  "histogram_bins_matched": 882579,
+  "comparison": "Decimal equality for every value; exact presence/absence for every source position"
+}

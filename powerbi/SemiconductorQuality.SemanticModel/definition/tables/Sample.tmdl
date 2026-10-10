@@ -1,0 +1,170 @@
+/// One row per recorded UCI sample. Row position aligns labels with measurements.
+table Sample
+	lineageTag: 8eac0f08-02f4-4c1d-bd5a-970060c9de34
+
+	/// Recorded samples in the selected dates. Outcome filters do not change the denominator.
+	measure Samples = CALCULATE(COUNTROWS('Sample'), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]))
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: d7f90988-2288-40ff-8ce4-59750d8dfbf7
+
+	/// Samples labelled -1 in the source.
+	measure 'Passed Samples' = IF([Samples] > 0, COALESCE(CALCULATE(COUNTROWS('Sample'), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = -1),0))
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: 7fc7f610-1280-49ab-b3e5-6e1292b5db6a
+
+	/// Samples labelled 1 in the source.
+	measure 'Failed Samples' = IF([Samples] > 0, COALESCE(CALCULATE(COUNTROWS('Sample'), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = 1),0))
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: aeaf324a-b9e6-412c-970c-79fd6d53136b
+
+	/// Observed sample pass rate; not first-pass or final yield.
+	measure 'Observed Pass Rate' = DIVIDE([Passed Samples], [Samples])
+		formatString: 0.00%
+		displayFolder: Analysis
+		lineageTag: e0416e9a-00fc-4466-a3d5-d59dc49f18df
+
+	/// Failed samples divided by all selected samples.
+	measure 'Observed Failure Rate' = DIVIDE([Failed Samples], [Samples])
+		formatString: 0.00%
+		displayFolder: Analysis
+		lineageTag: 5c830834-6c00-4c0b-9833-8248e4f3946c
+
+	/// Missing measurement cells on one selected sample.
+	measure 'Sample Missing Count' = SELECTEDVALUE('Sample'[Missing Measurements])
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: d418c261-25ee-47e8-a4d5-d6f053562723
+
+	/// Original row index. An analytical identifier, not a company device identifier.
+	measure 'Selected Sample' = IF(HASONEVALUE('Sample'[Sample ID]), FORMAT(SELECTEDVALUE('Sample'[Sample ID]), "0000"), "Select one sample")
+		formatString: @
+		displayFolder: Analysis
+		lineageTag: 911117f5-b965-4d54-b269-54bc03190716
+
+	/// Source outcome for one selected sample.
+	measure 'Sample Outcome' = SELECTEDVALUE('Sample'[Outcome], "Multiple samples")
+		formatString: @
+		displayFolder: Analysis
+		lineageTag: 6559d2d9-b32c-435a-b769-9dd8e0f4eaad
+
+	/// Original timestamp; source does not specify a timezone.
+	measure 'Sample Timestamp' = IF(HASONEVALUE('Sample'[Sample ID]), FORMAT(SELECTEDVALUE('Sample'[Timestamp]), "dd MMM yyyy HH:mm"), "Select one sample")
+		formatString: @
+		displayFolder: Analysis
+		lineageTag: 9a4bb1e2-148a-449b-915a-3100760bb135
+
+	/// All expected sample-measurement pairs in current filters.
+	measure 'Expected Readings' = COUNTROWS('Sample') * COUNTROWS('Measurement')
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: 0361402c-fb1e-48c2-9489-a4046f1bd2f1
+
+	/// Zero when expected cells exist but none are recorded; blank when no cells are expected. Source missing values remain unchanged.
+	measure 'Reading Completeness' = DIVIDE(COALESCE([Valid Readings], 0), [Expected Readings])
+		formatString: 0.00%
+		displayFolder: Analysis
+		lineageTag: b8bfebfb-45f8-4c81-a336-9eac1107ef37
+
+	/// Expected pairs less valid numeric readings.
+	measure 'Missing Readings' = IF([Expected Readings] > 0, [Expected Readings] - COALESCE([Valid Readings],0))
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: 50574ab4-654a-4822-b6e1-4fe19d3f863c
+
+	/// Missing cells as a share of selected expected cells.
+	measure 'Missing Rate' = DIVIDE([Missing Readings], [Expected Readings])
+		formatString: 0.00%
+		displayFolder: Analysis
+		lineageTag: 9a5fba02-c2f7-42c1-a3d8-e3eea189f34a
+
+	/// Readings available and missing for exactly one selected sample.
+	measure 'Coverage Cells' = IF(HASONEVALUE('Sample'[Sample ID]), SWITCH(SELECTEDVALUE('Availability'[Status]), "Available", [Valid Readings], "Missing", [Missing Readings]))
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: ca99e270-aa8c-45ed-8dfb-b23591ac7782
+
+	/// Controls the detail-page empty state.
+	measure 'Single Sample Selected' = IF(HASONEVALUE('Sample'[Sample ID]),1,0)
+		formatString: 0
+		displayFolder: Analysis
+		lineageTag: b9bd600f-d9fe-4906-ac59-9dc392bb66f7
+
+	/// Elapsed fractional days since the first source timestamp. Original timestamp is retained in the tooltip.
+	measure 'Elapsed Days' =
+			VAR _time = SELECTEDVALUE('Sample'[Timestamp])
+			VAR _start = CALCULATE(MIN('Sample'[Timestamp]), REMOVEFILTERS('Sample'), REMOVEFILTERS('Calendar'))
+			RETURN IF(HASONEVALUE('Sample'[Sample ID]), CONVERT(_time, DOUBLE) - CONVERT(_start, DOUBLE))
+		formatString: 0.0
+		displayFolder: Analysis
+		lineageTag: 078c9b0b-941b-459a-8eee-7db678bb8bc2
+
+	/// One-based original row index; not a documented device or lot ID.
+	column 'Sample ID'
+		dataType: int64
+		lineageTag: cf427a16-eeea-4923-889b-8f57d28e6ad4
+		summarizeBy: none
+		sourceColumn: Sample ID
+
+	/// Original recorded timestamp; timezone unspecified.
+	column Timestamp
+		dataType: dateTime
+		formatString: dd MMM yyyy HH:mm
+		lineageTag: 7943af5d-3a20-47be-a4bc-68f44a0a0e0e
+		summarizeBy: none
+		sourceColumn: Timestamp
+
+	/// Date component for the calendar relationship.
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: dd MMM yyyy
+		lineageTag: 63de175d-608b-4c07-8ece-ab43502daf2a
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Original -1 pass and 1 fail encoding.
+	column 'Outcome Code'
+		dataType: int64
+		isHidden
+		lineageTag: 45c855dd-5122-4d00-9a76-4a3e13aa1cf8
+		summarizeBy: none
+		sourceColumn: Outcome Code
+
+	/// Pass or Fail from the original labels.
+	column Outcome
+		dataType: string
+		lineageTag: 8a81991e-a865-4ac3-92b7-79eee0ad1ec0
+		summarizeBy: none
+		sourceColumn: Outcome
+
+	/// Number of absent values among the 590 measurements.
+	column 'Missing Measurements'
+		dataType: int64
+		isHidden
+		lineageTag: 7823144a-5c2f-45cd-aedb-29dacd3b8d42
+		summarizeBy: none
+		sourceColumn: Missing Measurements
+
+	partition Sample = m
+		mode: import
+		source =
+				let
+				    Labels = #"Read Labels"(),
+				    Measurements = #"Read Measurements"(),
+				    Checked = if Table.RowCount(Labels) = Table.RowCount(Measurements)
+				        then Labels else error "Label and measurement row counts differ.",
+				    Missing = List.Buffer(List.Transform(Table.ToRows(Table.RemoveColumns(Measurements, {"Sample ID"})),
+				        each 590 - List.NonNullCount(_))),
+				    WithMissing = Table.AddColumn(Checked, "Missing Measurements", each Missing{[Sample ID]-1}, Int64.Type),
+				    WithOutcome = Table.AddColumn(WithMissing, "Outcome", each if [Outcome Code] = -1 then "Pass" else "Fail", type text),
+				    WithDate = Table.AddColumn(WithOutcome, "Date", each Date.From([Timestamp]), type date)
+				in
+				    WithDate
+
+	annotation PBI_ResultType = Table
+

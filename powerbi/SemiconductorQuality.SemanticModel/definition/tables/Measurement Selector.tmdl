@@ -1,0 +1,104 @@
+/// Disconnected single-selection utility; measurement ranking remains independent.
+table 'Measurement Selector'
+	lineageTag: 50e7c67f-448b-4d18-849f-06ed5cc400c7
+
+	/// Applies the disconnected measurement selector; select exactly one measurement.
+	measure 'Selected Pass Valid' = IF(HASONEVALUE('Measurement Selector'[Measurement ID]), CALCULATE([Pass Valid], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID])))
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: 52803a73-ba9c-4edf-9665-8203c3feff11
+
+	/// Applies the disconnected measurement selector; select exactly one measurement.
+	measure 'Selected Fail Valid' = IF(HASONEVALUE('Measurement Selector'[Measurement ID]), CALCULATE([Fail Valid], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID])))
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: 5f61e1c1-5c6a-4aab-b778-24415f8db148
+
+	/// Applies the disconnected measurement selector; select exactly one measurement.
+	measure 'Selected Completeness' = IF(HASONEVALUE('Measurement Selector'[Measurement ID]), CALCULATE([Reading Completeness], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID])))
+		formatString: 0.00%
+		displayFolder: Analysis
+		lineageTag: 127c5263-3fda-4e33-a718-410bbadaf093
+
+	/// Applies the disconnected measurement selector; select exactly one measurement.
+	measure 'Selected Difference' = IF(HASONEVALUE('Measurement Selector'[Measurement ID]), CALCULATE([Absolute Standardized Difference], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID])))
+		formatString: 0.000
+		displayFolder: Analysis
+		lineageTag: e4a52a98-e519-40fc-ab07-c42b5d635390
+
+	/// Applies the disconnected measurement selector; select exactly one measurement.
+	measure 'Selected Reading' = IF(HASONEVALUE('Measurement Selector'[Measurement ID]), CALCULATE([Reading Value], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID])))
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: 2f5d3ec8-802c-4580-8cf8-80c0b5e000b1
+
+	/// Share of this outcome group in a common bin, using valid readings only.
+	measure 'Pass Distribution' =
+			VAR _valid = CALCULATE([Valid Readings], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = -1)
+			VAR _inBin = CALCULATE([Valid Readings], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = -1, TREATAS(VALUES('Histogram Bin'[Bin]), 'Reading'[Histogram Bin]))
+			RETURN IF(HASONEVALUE('Measurement Selector'[Measurement ID]), DIVIDE(COALESCE(_inBin,0),_valid))
+		formatString: 0.0%
+		displayFolder: Analysis
+		lineageTag: 9ef909b8-54f3-41c1-afbd-8c784b6afb48
+
+	/// Share of this outcome group in a common bin, using valid readings only.
+	measure 'Fail Distribution' =
+			VAR _valid = CALCULATE([Valid Readings], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = 1)
+			VAR _inBin = CALCULATE([Valid Readings], TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = 1, TREATAS(VALUES('Histogram Bin'[Bin]), 'Reading'[Histogram Bin]))
+			RETURN IF(HASONEVALUE('Measurement Selector'[Measurement ID]), DIVIDE(COALESCE(_inBin,0),_valid))
+		formatString: 0.0%
+		displayFolder: Analysis
+		lineageTag: db27aad4-0584-47e1-8599-d7c634ae0008
+
+	/// Median of valid readings in the selected outcome group and measurement.
+	measure 'Pass Median' = IF(HASONEVALUE('Measurement Selector'[Measurement ID]), CALCULATE(MEDIANX('Reading',CONVERT('Reading'[Value],DOUBLE)), TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = -1))
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: 94695e8b-914a-4788-af6f-b7b8bc1a7e2b
+
+	/// Median of valid readings in the selected outcome group and measurement.
+	measure 'Fail Median' = IF(HASONEVALUE('Measurement Selector'[Measurement ID]), CALCULATE(MEDIANX('Reading',CONVERT('Reading'[Value],DOUBLE)), TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = 1))
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: 357994d3-7686-469c-b788-269359abd689
+
+	/// Raw-value boundary for the common full-source histogram bin; last bin includes its upper edge.
+	measure 'Bin Lower Edge' =
+			VAR _min = CALCULATE(MIN('Measurement'[Global Minimum]), TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]))
+			VAR _max = CALCULATE(MAX('Measurement'[Global Maximum]), TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]))
+			RETURN IF(HASONEVALUE('Measurement Selector'[Measurement ID]) && HASONEVALUE('Histogram Bin'[Bin]), CONVERT(_min,DOUBLE)+DIVIDE((SELECTEDVALUE('Histogram Bin'[Bin])-1)*(CONVERT(_max,DOUBLE)-CONVERT(_min,DOUBLE)),20))
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: e0515a8d-e6d0-4c3a-a96d-e3e9daaa38e5
+
+	/// Raw-value boundary for the common full-source histogram bin; last bin includes its upper edge.
+	measure 'Bin Upper Edge' =
+			VAR _min = CALCULATE(MIN('Measurement'[Global Minimum]), TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]))
+			VAR _max = CALCULATE(MAX('Measurement'[Global Maximum]), TREATAS(VALUES('Measurement Selector'[Measurement ID]), 'Measurement'[Measurement ID]))
+			RETURN IF(HASONEVALUE('Measurement Selector'[Measurement ID]) && HASONEVALUE('Histogram Bin'[Bin]), CONVERT(_min,DOUBLE)+DIVIDE((SELECTEDVALUE('Histogram Bin'[Bin])-0)*(CONVERT(_max,DOUBLE)-CONVERT(_min,DOUBLE)),20))
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: da48381c-a3f1-4caa-83eb-cef03738c904
+
+	/// Selected one-based measurement index.
+	column 'Measurement ID'
+		dataType: int64
+		isHidden
+		lineageTag: 28df08e1-680e-4d28-a99b-b6f024f68dd5
+		summarizeBy: none
+		sourceColumn: Measurement ID
+
+	/// Anonymous measurement label.
+	column Measurement
+		dataType: string
+		lineageTag: 1fee48b5-4f29-482b-8070-dfa99150f643
+		summarizeBy: none
+		sourceColumn: Measurement
+
+	partition 'Measurement Selector' = m
+		mode: import
+		source =
+				Table.FromRows(
+				    List.Transform({1..590}, each {_, "Measurement " & Text.PadStart(Text.From(_), 3, "0")}),
+				    type table [#"Measurement ID"=Int64.Type, Measurement=text])
+

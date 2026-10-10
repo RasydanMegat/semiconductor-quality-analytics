@@ -1,0 +1,40 @@
+/// Directory containing the two original SECOM input files.
+expression 'Data Folder' = "__SET_DATA_FOLDER__" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 63e9e211-5a52-44d5-a80c-573f2f11162c
+
+expression 'Read Measurements' =
+		() as table =>
+		let
+		    Source = Binary.Buffer(File.Contents(#"Data Folder" & "\secom.data")),
+		    Fields = Csv.Document(Source, null, "", ExtraValues.Error, 65001),
+		    Checked = if Table.ColumnCount(Fields) = 590 and Table.RowCount(Fields) > 0
+		        then Fields else error "Expected a nonempty SECOM file with 590 measurements per row.",
+		    Names = List.Transform({1..590}, each "Measurement " & Text.PadStart(Text.From(_), 3, "0")),
+		    Named = Table.RenameColumns(Checked, List.Zip({Table.ColumnNames(Checked), Names})),
+		    ToReading = (token as nullable text) as nullable number =>
+		        if token = null or token = "" then error "A source row is missing fields. Use NaN for a missing reading."
+		        else if Text.Lower(token) = "nan" then null
+		        else let value = Number.FromText(token, "en-US"), fixed = Currency.From(value)
+		             in if Number.From(fixed) = value then fixed
+		                else error "A reading exceeds four-decimal storage precision. Review the model before importing.",
+		    Typed = Table.TransformColumns(Named, List.Transform(Names, each {_, ToReading, Currency.Type})),
+		    Indexed = Table.AddIndexColumn(Typed, "Sample ID", 1, 1, Int64.Type)
+		in
+		    Table.Buffer(Indexed)
+	lineageTag: 90a96750-8337-4abc-8ebf-8213c8fb5450
+
+expression 'Read Labels' =
+		() as table =>
+		let
+		    Source = Csv.Document(File.Contents(#"Data Folder" & "\secom_labels.data"),
+		        [Delimiter=" ", Columns=2, Encoding=65001, QuoteStyle=QuoteStyle.Csv, ExtraValues=ExtraValues.Error]),
+		    Named = Table.RenameColumns(Source, {{"Column1", "Outcome Code"}, {"Column2", "Timestamp"}}),
+		    Typed = Table.TransformColumns(Named, {
+		        {"Outcome Code", each let code = Number.FromText(_, "en-US")
+		            in if code = -1 or code = 1 then Int64.From(code) else error "Expected -1/pass or 1/fail.", Int64.Type},
+		        {"Timestamp", each DateTime.FromText(_, [Format="dd/MM/yyyy HH:mm:ss", Culture="en-GB"]), type datetime}}),
+		    Indexed = Table.AddIndexColumn(Typed, "Sample ID", 1, 1, Int64.Type)
+		in
+		    Table.Buffer(Indexed)
+	lineageTag: 648ff915-6939-4591-8353-da2541a8c836
+

@@ -1,0 +1,12 @@
+relationship CalendarToSample
+	fromColumn: Sample.Date
+	toColumn: Calendar.Date
+
+relationship SampleToReading
+	fromColumn: Reading.'Sample ID'
+	toColumn: Sample.'Sample ID'
+
+relationship MeasurementToReading
+	fromColumn: Reading.'Measurement ID'
+	toColumn: Measurement.'Measurement ID'
+

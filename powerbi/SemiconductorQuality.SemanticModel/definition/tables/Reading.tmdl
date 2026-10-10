@@ -1,0 +1,121 @@
+/// One row per nonmissing sample-measurement pair. Nulls are omitted only here and remain in completeness denominators.
+table Reading
+	lineageTag: 87955c84-3d98-4494-887b-ea479b42e8ee
+
+	/// Nonmissing readings in the current sample and measurement filters.
+	measure 'Valid Readings' = COUNTROWS('Reading')
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: 1040cbfa-73be-4d76-9cf7-d2c577ac64f3
+
+	/// Single raw reading; blank unless exactly one sample is selected.
+	measure 'Reading Value' = IF(HASONEVALUE('Sample'[Sample ID]), SELECTEDVALUE('Reading'[Value]))
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: 1c51b79e-be82-49e1-b881-021a52d88180
+
+	/// Valid readings among passes for the current measurement and dates.
+	measure 'Pass Valid' = CALCULATE([Valid Readings], REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = -1)
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: 641cd2d7-705b-4a6e-9579-aeab5b9d9250
+
+	/// Valid readings among failures for the current measurement and dates.
+	measure 'Fail Valid' = CALCULATE([Valid Readings], REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = 1)
+		formatString: #,##0
+		displayFolder: Analysis
+		lineageTag: d7953325-6087-462f-aee5-e597f975f110
+
+	/// Pass mean computed at double precision to avoid premature currency rounding; anonymous units.
+	measure 'Pass Mean' = CALCULATE(AVERAGEX('Reading', CONVERT('Reading'[Value], DOUBLE)), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = -1)
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: 423e23e0-3691-4e5f-aa61-00fd191c30f3
+
+	/// Fail mean computed at double precision to avoid premature currency rounding; anonymous units.
+	measure 'Fail Mean' = CALCULATE(AVERAGEX('Reading', CONVERT('Reading'[Value], DOUBLE)), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = 1)
+		formatString: 0.0000
+		displayFolder: Analysis
+		lineageTag: c9e368f9-4f40-4c74-b1a8-36b23c8b34cd
+
+	/// Exploratory absolute mean difference divided by pooled sample SD. Requires 100 pass, 20 fail, and 80% coverage in each group. Not causal or a significance test.
+	measure 'Absolute Standardized Difference' =
+			VAR _pass = [Pass Valid]
+			VAR _fail = [Fail Valid]
+			VAR _passCoverage = DIVIDE(_pass, [Passed Samples])
+			VAR _failCoverage = DIVIDE(_fail, [Failed Samples])
+			VAR _eligible = HASONEVALUE('Measurement'[Measurement ID]) && _pass >= 100 && _fail >= 20 && _passCoverage >= 0.8 && _failCoverage >= 0.8
+			RETURN IF(_eligible,
+			    VAR _passVar = CALCULATE(VARX.S('Reading', CONVERT('Reading'[Value], DOUBLE)), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = -1)
+			    VAR _failVar = CALCULATE(VARX.S('Reading', CONVERT('Reading'[Value], DOUBLE)), REMOVEFILTERS('Sample'[Outcome], 'Sample'[Outcome Code]), 'Sample'[Outcome Code] = 1)
+			    VAR _pooled = SQRT(DIVIDE((_pass-1)*_passVar+(_fail-1)*_failVar, _pass+_fail-2))
+			    RETURN DIVIDE(ABS([Fail Mean]-[Pass Mean]),_pooled))
+		formatString: 0.000
+		displayFolder: Analysis
+		lineageTag: 1e5836a0-5046-4cf8-bf8e-8ff4145c8e92
+
+	/// Ranks eligible measurements by descriptive standardized separation; ties share rank.
+	measure 'Measurement Rank' = IF(NOT ISBLANK([Absolute Standardized Difference]), RANKX(ALLSELECTED('Measurement'[Measurement]), [Absolute Standardized Difference],, DESC, DENSE))
+		formatString: 0
+		displayFolder: Analysis
+		lineageTag: 6d310a6c-6733-47fb-b85e-d8ddaf8fd8e0
+
+	/// Retains missing measurements as explicit rows when one sample is selected.
+	measure 'Reading Status' = IF(HASONEVALUE('Sample'[Sample ID]) && HASONEVALUE('Measurement'[Measurement ID]), IF(COUNTROWS('Reading') > 0, "Recorded", "Missing"))
+		formatString: @
+		displayFolder: Analysis
+		lineageTag: 28dfc389-dbdc-40b1-bf85-6eb840da01fe
+
+	/// Relationship to the original sample row.
+	column 'Sample ID'
+		dataType: int64
+		isHidden
+		lineageTag: 28d5963a-ae3d-4a82-b872-f9e4a3158170
+		summarizeBy: none
+		sourceColumn: Sample ID
+
+	/// Relationship to the anonymous measurement.
+	column 'Measurement ID'
+		dataType: int64
+		isHidden
+		lineageTag: f8b661b9-ec7c-40e1-afaf-fea8e4208f7d
+		summarizeBy: none
+		sourceColumn: Measurement ID
+
+	/// Unchanged source reading at the original four-decimal precision.
+	column Value
+		dataType: decimal
+		isHidden
+		lineageTag: dae54927-de3b-4454-b967-3f785e2bc685
+		summarizeBy: none
+		sourceColumn: Value
+
+	/// Shared full-source 20-bin index; maximum clamped to bin 20.
+	column 'Histogram Bin'
+		dataType: int64
+		isHidden
+		lineageTag: b90540c5-24af-43b6-b00f-5737c075a1e6
+		summarizeBy: none
+		sourceColumn: Histogram Bin
+
+	partition Reading = m
+		mode: import
+		source =
+				let
+				    Source = Table.RemoveColumns(#"Read Measurements"(), {"Sample ID"}),
+				    Columns = List.Buffer(List.Transform(Table.ToColumns(Source), List.Buffer)),
+				    ByMeasurement = List.Transform({0..589}, (i) => let
+				        Values = Columns{i},
+				        Valid = List.Buffer(List.RemoveNulls(Values)),
+				        Minimum = List.Min(Valid, null),
+				        Maximum = List.Max(Valid, null),
+				        Rows = List.RemoveNulls(List.Transform(List.Positions(Values), (j) => let
+				            Value = Values{j},
+				            Bin = if Minimum = Maximum then 1 else List.Min({20, 1 + Number.RoundDown(20 * (Value-Minimum)/(Maximum-Minimum))})
+				            in if Value = null then null else {j+1, i+1, Value, Bin}))
+				        in Rows),
+				    Result = Table.FromRows(List.Combine(ByMeasurement), type table [#"Sample ID"=Int64.Type,
+				        #"Measurement ID"=Int64.Type, Value=Currency.Type, #"Histogram Bin"=Int64.Type])
+				in
+				    Result
+

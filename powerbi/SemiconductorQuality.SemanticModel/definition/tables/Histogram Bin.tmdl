@@ -1,0 +1,15 @@
+/// Disconnected 20-bin utility. Boundaries are shared by pass and fail.
+table 'Histogram Bin'
+	lineageTag: 2466f0a0-2214-48df-a75c-1998d74f6b98
+
+	/// Bins 1 to 20 between full-source minimum and maximum.
+	column Bin
+		dataType: int64
+		lineageTag: 463d68f0-3c06-40d6-982b-a04441ebc26e
+		summarizeBy: none
+		sourceColumn: Bin
+
+	partition 'Histogram Bin' = m
+		mode: import
+		source = Table.TransformColumnTypes(Table.FromList({1..20},Splitter.SplitByNothing(),{"Bin"}),{{"Bin",Int64.Type}})
+

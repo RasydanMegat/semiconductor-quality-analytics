@@ -1,0 +1,37 @@
+/// Contiguous calendar covering the original sample period.
+table Calendar
+	lineageTag: 90728dcb-1f72-4ee4-9683-4f69672361cb
+	dataCategory: Time
+
+	/// One row per day, including days without records.
+	column Date
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: c5bb193d-98e2-4c37-ae9b-1baea16928e3
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Monday of the sample week; edge weeks may be partial.
+	column 'Week Start'
+		dataType: dateTime
+		formatString: dd MMM yyyy
+		lineageTag: 2624110f-555a-4171-92f9-8ea8c1bd3ce2
+		summarizeBy: none
+		sourceColumn: Week Start
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition Calendar = m
+		mode: import
+		source =
+				let
+				    Dates = List.Buffer(List.Transform(#"Read Labels"()[Timestamp], Date.From)),
+				    Start = List.Min(Dates),
+				    End = List.Max(Dates),
+				    Calendar = Table.FromColumns({List.Dates(Start, Duration.Days(End-Start)+1, #duration(1,0,0,0))}, type table [Date=date]),
+				    WithWeek = Table.AddColumn(Calendar, "Week Start", each Date.StartOfWeek([Date], Day.Monday), type date)
+				in
+				    WithWeek
+

@@ -1,0 +1,19 @@
+# Desktop caches and local state
+**/.pbi/
+**/localSettings.json
+**/cache.abf
+**/unappliedChanges.json
+**/diagramLayout.json
+*.pbix
+*.pbit
+# Temporary tooling and verification extracts
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+tmp/
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*

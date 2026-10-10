@@ -1,0 +1,5 @@
+* text=auto eol=lf
+# Preserve the original downloaded files byte for byte.
+data/*.data -text
+data/*.names -text
+*.png binary

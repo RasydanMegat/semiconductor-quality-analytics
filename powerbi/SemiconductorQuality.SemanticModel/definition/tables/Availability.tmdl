@@ -1,0 +1,15 @@
+/// Disconnected legend for available and missing counts.
+table Availability
+	lineageTag: 7adc0a7b-bd6a-4249-91ae-2461d38e7cc3
+
+	/// Whether an expected reading is available or missing.
+	column Status
+		dataType: string
+		lineageTag: 15408107-e22d-42ee-add2-b08e8a4d17e7
+		summarizeBy: none
+		sourceColumn: Status
+
+	partition Availability = m
+		mode: import
+		source = #table(type table [Status=text],{{"Available"},{"Missing"}})
+

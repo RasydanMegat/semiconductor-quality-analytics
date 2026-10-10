@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "SemiconductorQuality"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "37cf2d2e-df59-4114-aaf3-35f4187f41c5"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "checked_at_utc": "2026-10-09T22:55:49.8833245Z",
+  "assertions": 5874,
+  "measurement_columns_reconciled": 590,
+  "query_batch_seconds": 0.2698019,
+  "scope": [
+    "headline counts and rates",
+    "all 590 measurement counts, means and eligible effect sizes",
+    "daily and weekly totals and rates",
+    "daily reading completeness",
+    "outcome-filter denominator",
+    "empty selection",
+    "single-sample gate",
+    "590 original sample-1 readings including 44 nulls",
+    "20-bin normalized distributions for measurements 001, 006 (constant), 060 and 104"
+  ],
+  "source_sha256": {
+    "secom.data": "20f0e7ee434f7dcbae0eea9ffff009a2b57f42d6b0dc9a5bd4f00782c0a3374c",
+    "secom_labels.data": "126884cf453705c9e61a903fe906f0665a3b45ce3639e621edc5c93c89627e03"
+  }
+}
